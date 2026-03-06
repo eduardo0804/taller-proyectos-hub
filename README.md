@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Taller de Proyectos HUB - Ecosistema Digital USMP
 
-## Getting Started
+Plataforma Full-Stack de alta disponibilidad diseñada para la difusión, gestión y visualización arquitectónica de los proyectos de vanguardia desarrollados en la Escuela de Ingeniería de Computación y Sistemas (USMP). Actualmente albergando los ecosistemas: **Legado Fia** (Azure) y **NANUTECH** (AWS).
 
-First, run the development server:
+## 🚀 Características Principales
 
+Esta plataforma está dividida en dos grandes módulos, aplicando el patrón de diseño de separación de responsabilidades (Route Groups):
+
+### 🌍 1. Zona Pública (Frontend de Difusión)
+
+* **Server-Side Rendering (SSR):** Consumo de datos ultrarrápido desde la base de datos para SEO técnico y rendimiento óptimo.
+* **Diagramas Interactivos (Fase 3):** Visor de arquitectura de software renderizado con React Flow, permitiendo explorar las capas de Frontend, Backend e Infraestructura.
+* **Timeline de Sprints:** Visualización dinámica de los avances semanales bajo metodología Scrum, calculando el progreso general y por áreas (Liderazgo, Desarrollo, Infraestructura, QA).
+* **UI/UX Moderna:** Animaciones fluidas con Framer Motion y diseño responsivo construido con Tailwind CSS.
+
+### 🔒 2. Gestor Administrativo (CMS Oculto)
+
+* **Seguridad perimetral:** Ruta /admin-gestion protegida mediante Middleware de Next.js y Basic Authentication.
+* **Editor Visual Drag & Drop:** Lienzo interactivo donde el administrador puede diseñar, arrastrar y conectar nodos de arquitectura, sincronizando las coordenadas (JSON) directamente a la base de datos.
+* **Súper Formularios Dinámicos:** Gestor de reportes de avances construido con react-hook-form (useFieldArray) y validación estricta de esquemas con Zod.
+* **Server Actions (Next.js 15):** Mutaciones de datos y revalidación de caché (revalidatePath) sin necesidad de crear APIs tradicionales.
+
+---
+
+## 🛠️ Stack Tecnológico
+
+* **Core Framework:** [Next.js 15](https://nextjs.org/) (App Router) + React 19
+* **Lenguaje:** TypeScript (Strict Mode)
+* **Base de Datos:** PostgreSQL alojado en [Supabase](https://supabase.com/)
+* **ORM:** [Prisma](https://www.prisma.io/)
+* **Estilos y UI:** Tailwind CSS + Lucide React
+* **Diagramas:** @xyflow/react (React Flow)
+* **Formularios y Validación:** React Hook Form + Zod
+* **Despliegue y Cron Jobs:** Vercel
+
+---
+
+## 🗄️ Esquema de Base de Datos (Modelo Relacional)
+
+La base de datos Serverless está diseñada para soportar escalabilidad:
+
+* **Project:** Almacena la información core (Legado Fia, NANUTECH) y el Cloud Provider.
+* **TeamMember:** Gestión del equipo, roles y líderes globales.
+* **AdvanceReport:** Registro complejo de los Sprints (Semana, estado, fechas, arrays de logros y un JSONB dinámico para el progreso por áreas).
+* **DiagramState:** Almacena las coordenadas (X, Y) y las conexiones (Edges) del lienzo de arquitectura por cada capa (Frontend, Backend, Infra).
+
+---
+
+## ⚙️ Instalación y Desarrollo Local
+
+Si deseas clonar y correr este proyecto en tu entorno local, sigue estos pasos:
+
+### 1. Clonar el repositorio
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/tu-usuario/taller-proyectos-hub.git
+cd taller-proyectos-hub
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Instalar dependencias
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Variables de Entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Crea un archivo `.env` en la raíz del proyecto y solicita las credenciales de Supabase al administrador del repositorio:
+```env
+# Conexión a Supabase (PostgreSQL)
+DATABASE_URL="postgres://[usuario]:[password]@[host]:[puerto]/[db]?pgbouncer=true&connection_limit=1"
+DIRECT_URL="postgres://[usuario]:[password]@[host]:[puerto]/[db]"
+```
 
-## Learn More
+### 4. Sincronizar Prisma ORM
+```bash
+npx prisma generate
+npx prisma db push
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 5. Iniciar el servidor de desarrollo
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la plataforma. Para acceder al CMS, navega a `/admin-gestion`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🤖 Operaciones Automatizadas (DevOps)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Cron Job Anti-Inactividad:** Configurado en `vercel.json` apuntando a `/api/cron` para ejecutar un ping diario a las 10:00 AM UTC, evitando la suspensión de la base de datos gratuita en Supabase.
+* **SEO Dinámico:** Generación automática de `sitemap.xml` y `robots.txt` a través de las APIs nativas de metadatos de Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 👨‍💻 Autor
+
+* **Jesús Lázaro** - Gestión de Datos y Documentación (CMS)
+
+Desarrollado con ❤️ para el curso de Taller de Proyectos - USMP 2026
