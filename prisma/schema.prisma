@@ -1,14 +1,61 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Necesario para evitar errores de conexión en Supabase
+}
+
+model Project {
+  id            String           @id @default(cuid())
+  name          String           @unique
+  slug          String           @unique
+  description   String?
+  cloudProvider String           // "Azure" o "AWS"
+  members       TeamMember[]
+  advances      AdvanceReport[]
+  diagrams      DiagramState[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model TeamMember {
+  id             String   @id @default(cuid())
+  fullName       String
+  email          String?
+  role           String
+  isGlobalLeader Boolean  @default(false)
+  projectId      String?
+  project        Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdAt      DateTime @default(now())
+}
+
+model AdvanceReport {
+  id          String   @id @default(cuid())
+  weekNumber  Int
+  title       String
+  description String   @db.Text
+  status      String   @default("Pendiente")
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, weekNumber])
+}
+
+model DiagramState {
+  id        String   @id @default(cuid())
+  viewName  String
+  nodes     Json
+  edges     Json
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, viewName])
 }
