@@ -11,16 +11,16 @@ datasource db {
 }
 
 model Project {
-  id            String           @id @default(cuid())
-  name          String           @unique
-  slug          String           @unique
+  id            String          @id @default(cuid())
+  name          String          @unique
+  slug          String          @unique
   description   String?
-  cloudProvider String           // "Azure" o "AWS"
+  cloudProvider String          // "Azure" o "AWS"
   members       TeamMember[]
   advances      AdvanceReport[]
   diagrams      DiagramState[]
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model TeamMember {
@@ -40,6 +40,16 @@ model AdvanceReport {
   title       String
   description String   @db.Text
   status      String   @default("Pendiente")
+  
+  // --- NUEVOS CAMPOS PARA REPORTE DETALLADO ---
+  dateRange     String?  // Ej: "4 - 8 de Agosto 2025"
+  progress      Int      @default(0) // Progreso general 0-100
+  objectives    String[] @default([]) // Array de strings nativo de PostgreSQL
+  achievements  String[] @default([]) // Logros alcanzados
+  nextSteps     String[] @default([]) // Próximos pasos
+  areasProgress Json?    // Array dinámico: { area, progreso, actividades[], responsables[] }
+  // --------------------------------------------
+
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
