@@ -2,12 +2,12 @@
 
 import React, { useMemo, useCallback, useState } from 'react';
 import { 
-  ReactFlow, Background, Controls, MiniMap, Panel,
+  ReactFlow, Background, Controls, Panel,
   useNodesState, useEdgesState, addEdge, Connection, Edge, Node
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { CloudNode, TechNode } from './CustomNodes'; 
-import { Save, Plus, Loader2, Trash2, Settings, Type, Image as ImageIcon } from 'lucide-react';
+import { Save, Plus, Loader2, Settings, Type, Image as ImageIcon } from 'lucide-react';
 import { saveDiagramState } from '@/app/(admin)/admin-gestion/arquitectura/actions';
 
 const nodeTypes = {
@@ -34,19 +34,16 @@ export default function FlowEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
-  // ESTADOS DEL INSPECTOR (Para editar lo seleccionado)
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
 
   const types = useMemo(() => nodeTypes, []);
 
-  // Función al conectar dos nodos
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
-  // Función para añadir nodos nuevos
   const onAddNode = (type: 'techNode' | 'cloudNode') => {
     const newNode: Node = {
       id: `n-${Date.now()}`,
@@ -61,34 +58,28 @@ export default function FlowEditor({
     setNodes((nds) => [...nds, newNode]);
   };
 
-  // --- LÓGICA DEL INSPECTOR ---
-
-  // Detectar clic en un nodo
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
     setSelectedEdge(null);
     setSelectedNode(node);
   };
 
-  // Detectar clic en una línea (edge)
   const onEdgeClick = (_: React.MouseEvent, edge: Edge) => {
     setSelectedNode(null);
     setSelectedEdge(edge);
   };
 
-  // Clic en el fondo vacío (limpiar selección)
   const onPaneClick = () => {
     setSelectedNode(null);
     setSelectedEdge(null);
   };
 
-  // Actualizar datos del nodo seleccionado en tiempo real
   const updateNodeData = (field: string, value: string) => {
     if (!selectedNode) return;
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === selectedNode.id) {
           const updatedNode = { ...node, data: { ...node.data, [field]: value } };
-          setSelectedNode(updatedNode); // Actualizar también el inspector
+          setSelectedNode(updatedNode); 
           return updatedNode;
         }
         return node;
@@ -96,7 +87,6 @@ export default function FlowEditor({
     );
   };
 
-  // Actualizar texto de la línea seleccionada en tiempo real
   const updateEdgeLabel = (value: string) => {
     if (!selectedEdge) return;
     setEdges((eds) =>
@@ -105,7 +95,7 @@ export default function FlowEditor({
           const updatedEdge = { 
             ...edge, 
             label: value, 
-            labelStyle: { fontSize: 11, fontWeight: 700, fill: '#64748b' } // Estilo del texto
+            labelStyle: { fontSize: 11, fontWeight: 700, fill: '#64748b' } 
           };
           setSelectedEdge(updatedEdge);
           return updatedEdge;
@@ -115,12 +105,19 @@ export default function FlowEditor({
     );
   };
 
-  // -----------------------------
-
   const handleSave = async () => {
     setIsSaving(true);
     setSaveStatus(null);
-    const result = await saveDiagramState({ projectId, viewName, nodes, edges });
+    
+    // AQUÍ ESTÁ LA MAGIA: Enviamos el array de ReactFlow forzado a ser unknown[] 
+    // para que haga match perfecto con lo que espera el server action.
+    const result = await saveDiagramState({ 
+      projectId, 
+      viewName, 
+      nodes: nodes as unknown[], 
+      edges: edges as unknown[]  
+    });
+
     if (result.success) {
       setSaveStatus("✅ Guardado correctamente");
       setTimeout(() => setSaveStatus(null), 3000);
@@ -137,8 +134,6 @@ export default function FlowEditor({
 
   return (
     <div className="h-[750px] w-full bg-slate-50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden relative flex flex-col">
-      
-      {/* BARRA DE HERRAMIENTAS */}
       <div className="bg-slate-900 text-white p-4 flex justify-between items-center z-10 relative">
         <div>
           <h3 className="font-bold text-sm">Editor: {projectName}</h3>
@@ -164,9 +159,7 @@ export default function FlowEditor({
         </div>
       </div>
 
-      {/* ÁREA DE TRABAJO */}
       <div className="flex-grow flex relative">
-        {/* LIENZO */}
         <div className="flex-grow h-full">
           <ReactFlow
             nodes={nodes}
@@ -174,9 +167,9 @@ export default function FlowEditor({
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            onNodeClick={onNodeClick}   // Escucha clics en cajas
-            onEdgeClick={onEdgeClick}   // Escucha clics en líneas
-            onPaneClick={onPaneClick}   // Escucha clics en el fondo
+            onNodeClick={onNodeClick} 
+            onEdgeClick={onEdgeClick} 
+            onPaneClick={onPaneClick} 
             nodeTypes={types}
             defaultEdgeOptions={defaultEdgeOptions}
             fitView
@@ -185,7 +178,6 @@ export default function FlowEditor({
             <Background color="#cbd5e1" gap={20} />
             <Controls className="bg-white border-slate-200 shadow-lg mb-4 ml-2" />
             
-            {/* AQUI ESTÁ EL CAMBIO: ml-24 empuja la caja más a la derecha para no tapar el zoom */}
             <Panel position="bottom-right" className="bg-white/90 p-4 rounded-xl border border-slate-200 shadow-sm m-4 max-w-xs ml-24">
                <h4 className="text-xs font-black text-slate-800 mb-1 flex items-center"><Settings className="w-3 h-3 mr-1 text-purple-500"/> Editar</h4>
                <p className="text-[10px] text-slate-500">Haz clic en una caja o línea para editar su texto o icono. Usa <strong>Suprimir</strong> para borrar.</p>
@@ -193,7 +185,6 @@ export default function FlowEditor({
           </ReactFlow>
         </div>
         
-        {/* PANEL INSPECTOR (Aparece al seleccionar) */}
         {(selectedNode || selectedEdge) && (
           <div className="w-80 bg-white border-l border-slate-200 shadow-xl p-6 overflow-y-auto animate-in slide-in-from-right-8 duration-200 z-10">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
@@ -203,7 +194,6 @@ export default function FlowEditor({
               </h3>
             </div>
 
-            {/* Si seleccionó un NODO */}
             {selectedNode && (
               <div className="space-y-5">
                 <div className="space-y-2">
@@ -239,7 +229,6 @@ export default function FlowEditor({
               </div>
             )}
 
-            {/* Si seleccionó una LÍNEA */}
             {selectedEdge && (
               <div className="space-y-5">
                 <div className="space-y-2">

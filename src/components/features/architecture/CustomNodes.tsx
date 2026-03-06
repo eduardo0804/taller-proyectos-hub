@@ -4,7 +4,6 @@ import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Cloud, Database, Globe, Server, Code2, Cpu, HardDrive, Smartphone, Shield, Lock } from 'lucide-react';
 
-// Diccionario de iconos disponibles para el editor
 export const iconMap: Record<string, React.ReactNode> = {
   globe: <Globe size={20} />,
   server: <Server size={20} />,
@@ -18,10 +17,8 @@ export const iconMap: Record<string, React.ReactNode> = {
   lock: <Lock size={20} />
 };
 
-// Nodo para Servicios de Nube (Azure/AWS)
-export const CloudNode = memo(({ data }: any) => {
+export const CloudNode = memo(({ data }: { data: Record<string, string> }) => {
   const isAzure = data.provider === 'Azure';
-  // Renderizamos el icono seleccionado o uno por defecto
   const IconComponent = iconMap[data.icon] || (isAzure ? <Cloud size={20} /> : <Server size={20} />);
 
   return (
@@ -41,8 +38,7 @@ export const CloudNode = memo(({ data }: any) => {
   );
 });
 
-// Nodo genérico para Tecnologías (React, Nextjs, etc)
-export const TechNode = memo(({ data }: any) => {
+export const TechNode = memo(({ data }: { data: Record<string, string> }) => {
   const IconComponent = iconMap[data.icon] || <Globe size={18} />;
 
   return (

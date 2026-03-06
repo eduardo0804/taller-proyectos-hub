@@ -38,7 +38,7 @@ export default function AdvanceForm({ projects }: { projects: { id: string, name
   const [success, setSuccess] = useState(false);
 
   // 2. Inicializar el formulario con valores por defecto
-  const { register, control, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+  const { register, control, handleSubmit, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       objectives: [{ value: "" }],
@@ -217,7 +217,7 @@ export default function AdvanceForm({ projects }: { projects: { id: string, name
           </div>
 
           {areaFields.length === 0 && (
-            <p className="text-sm text-slate-500 text-center py-6 border-2 border-dashed rounded-xl">No hay áreas asignadas. Haz clic en "Nuevo Equipo" para agregar progreso específico.</p>
+            <p className="text-sm text-slate-500 text-center py-6 border-2 border-dashed rounded-xl">No hay áreas asignadas. Haz clic en &quot;Nuevo Equipo&quot; para agregar progreso específico.</p>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

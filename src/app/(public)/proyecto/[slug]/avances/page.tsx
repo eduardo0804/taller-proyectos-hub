@@ -4,7 +4,6 @@ import Link from "next/link";
 import { 
   CheckCircle2, 
   Clock, 
-  AlertCircle, 
   TrendingUp, 
   CalendarDays,
   ChevronRight,
@@ -15,7 +14,6 @@ import {
   Calendar
 } from "lucide-react";
 
-// Definimos el tipo para la estructura del JSON que viene de Prisma
 type AreaProgress = {
   area: string;
   progreso: number;
@@ -26,7 +24,6 @@ type AreaProgress = {
 export default async function AdvancesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // 1. Obtener proyecto y sus reportes semanales
   const project = await prisma.project.findUnique({
     where: { slug },
     include: {
@@ -38,7 +35,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
 
   if (!project) notFound();
 
-  // 2. Cálculo de Progreso General
   const totalWeeks = 16;
   const completedWeeks = project.advances.filter(a => a.status === "Completado").length;
   const progressPercentage = Math.round((completedWeeks / totalWeeks) * 100);
@@ -46,7 +42,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
       
-      {/* Header General */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-center">
         <div className="lg:col-span-2 text-center md:text-left">
           <h2 className="text-primary text-sm font-bold tracking-[0.3em] uppercase mb-4">
@@ -60,7 +55,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
           </p>
         </div>
 
-        {/* Card de Porcentaje Global */}
         <div className="bg-white p-8 rounded-3xl shadow-xl border-b-4 border-primary text-center relative overflow-hidden">
           <TrendingUp className="absolute -top-4 -right-4 w-24 h-24 text-primary/5 rotate-12" />
           <div className="text-5xl font-black text-secondary mb-2">{progressPercentage}%</div>
@@ -74,7 +68,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
         </div>
       </div>
 
-      {/* Timeline de Semanas (Súper Detallado) */}
       <div className="space-y-12">
         {project.advances.length === 0 ? (
           <div className="bg-white p-12 rounded-3xl border border-dashed border-gray-200 text-center">
@@ -88,7 +81,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
             return (
               <div key={advance.id} className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden flex flex-col group">
                 
-                {/* Cabecera Roja de la Semana */}
                 <div className="bg-[#a4101a] text-white p-6 md:p-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl"></div>
                   
@@ -118,17 +110,14 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                   </div>
                 </div>
 
-                {/* Cuerpo del Reporte */}
                 <div className="p-6 md:p-8 space-y-10">
                   
-                  {/* Resumen */}
                   {advance.description && (
                     <p className="text-gray-600 text-lg leading-relaxed border-l-4 border-gray-200 pl-4 italic">
                       {advance.description}
                     </p>
                   )}
 
-                  {/* Objetivos y Logros */}
                   <div className="grid md:grid-cols-2 gap-8">
                     {advance.objectives.length > 0 && (
                       <div>
@@ -153,7 +142,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                     )}
                   </div>
 
-                  {/* Progreso por Áreas (El Grid Dinámico) */}
                   {areas.length > 0 && (
                     <div>
                       <h4 className="font-black text-secondary text-lg mb-6 border-b border-gray-100 pb-2">Progreso por Áreas</h4>
@@ -191,7 +179,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                     </div>
                   )}
 
-                  {/* Próximos Pasos */}
                   {advance.nextSteps.length > 0 && (
                     <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6">
                       <h4 className="flex items-center text-blue-700 font-black mb-4 uppercase text-sm tracking-widest"><ArrowRight className="w-5 h-5 mr-2" /> Próximos Pasos</h4>
@@ -210,7 +197,6 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
         )}
       </div>
 
-      {/* Info Metodológica Footnote */}
       <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-gray-50 p-8 rounded-3xl border border-gray-100 text-center md:text-left">
         <div>
           <h4 className="text-xl font-bold text-secondary mb-4 flex items-center justify-center md:justify-start">

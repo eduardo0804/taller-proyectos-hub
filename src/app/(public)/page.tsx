@@ -82,7 +82,7 @@ export default function LandingPage() {
             <div className="mt-6 bg-primary/5 border border-primary/20 px-6 py-3 rounded-xl max-w-2xl mx-auto flex items-center justify-center gap-3">
               <GraduationCap className="text-primary w-6 h-6 shrink-0" />
               <p className="text-sm font-medium text-secondary italic">
-                Desarrollado en el curso de <span className="font-bold text-primary">"Taller de Proyectos"</span> - Ciclo 2026 - I
+                Desarrollado en el curso de <span className="font-bold text-primary">&quot;Taller de Proyectos&quot;</span> - Ciclo 2026 - I
               </p>
             </div>
             

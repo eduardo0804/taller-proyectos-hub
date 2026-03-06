@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import FlowEditor from "@/components/features/architecture/FlowEditor";
 import Link from "next/link";
 import { ArrowLeft, Settings2 } from "lucide-react";
+import { type Node, type Edge } from "@xyflow/react";
 
 export default async function ArchitectureEditorPage({
   searchParams,
@@ -97,9 +98,8 @@ export default async function ArchitectureEditorPage({
             projectName={activeProject.name}
             cloudProvider={activeProject.cloudProvider}
             viewName={viewName}
-            // Si hay un diagrama guardado, lo inyectamos. Si no, le pasamos arrays vacíos.
-            initialNodes={existingDiagram ? (existingDiagram.nodes as any) : []}
-            initialEdges={existingDiagram ? (existingDiagram.edges as any) : []}
+            initialNodes={existingDiagram ? (existingDiagram.nodes as unknown as Node[]) : []}
+            initialEdges={existingDiagram ? (existingDiagram.edges as unknown as Edge[]) : []}
           />
         </div>
       ) : (

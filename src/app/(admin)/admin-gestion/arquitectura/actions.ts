@@ -2,19 +2,15 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 export async function saveDiagramState(data: {
   projectId: string;
   viewName: string; // 'frontend', 'backend', o 'infra'
-  nodes: any;
-  edges: any;
+  nodes: unknown[]; // Recibe arreglos genéricos desde el cliente
+  edges: unknown[]; // Recibe arreglos genéricos desde el cliente
 }) {
   try {
-    // Usamos upsert: Si ya existe un diagrama para este proyecto y vista, lo actualiza. Si no, lo crea.
-    // OJO: Asumiendo que tu schema de Prisma tiene un modelo DiagramState relacionado al Project.
-    // Si la estructura varía, adaptaremos esto. Lo importante es guardar el JSON.
-    
-    // Como el ID único del diagrama suele ser autogenerado, primero buscamos si existe
     const existingDiagram = await prisma.diagramState.findFirst({
       where: {
         projectId: data.projectId,
@@ -25,20 +21,23 @@ export async function saveDiagramState(data: {
     if (existingDiagram) {
       await prisma.diagramState.update({
         where: { id: existingDiagram.id },
-        data: { nodes: data.nodes, edges: data.edges }
+        data: { 
+          // Casteamos a InputJsonValue para que Prisma lo acepte sin errores
+          nodes: data.nodes as Prisma.InputJsonValue, 
+          edges: data.edges as Prisma.InputJsonValue 
+        }
       });
     } else {
       await prisma.diagramState.create({
         data: {
           projectId: data.projectId,
           viewName: data.viewName,
-          nodes: data.nodes,
-          edges: data.edges
+          nodes: data.nodes as Prisma.InputJsonValue,
+          edges: data.edges as Prisma.InputJsonValue
         }
       });
     }
 
-    // Actualizar la vista pública
     revalidatePath(`/proyecto/[slug]/arquitectura`, 'page');
     
     return { success: true };

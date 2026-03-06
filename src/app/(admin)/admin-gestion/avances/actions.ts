@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 // Actualizamos la interfaz para recibir todos los datos complejos
 export async function createAdvanceReport(data: {
@@ -15,7 +16,7 @@ export async function createAdvanceReport(data: {
   objectives: string[];
   achievements: string[];
   nextSteps: string[];
-  areasProgress: any[]; // Recibe el JSON de áreas
+  areasProgress: Prisma.InputJsonValue; // Recibe el JSON de áreas sin usar 'any'
 }) {
   try {
     const weekNum = parseInt(data.weekNumber);

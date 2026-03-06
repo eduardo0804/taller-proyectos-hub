@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import FlowViewer from "@/components/features/architecture/FlowViewer";
 import Link from "next/link";
 import { Info, Layout, Server, ShieldCheck } from "lucide-react";
+import { type Node, type Edge } from "@xyflow/react";
 
 export default async function ArchitecturePage({ 
   params, 
@@ -12,7 +13,7 @@ export default async function ArchitecturePage({
   searchParams: Promise<{ tab?: string }> 
 }) {
   const { slug } = await params;
-  const { tab = "frontend" } = await searchParams; // Pestaña por defecto
+  const { tab = "frontend" } = await searchParams;
 
   const project = await prisma.project.findUnique({
     where: { slug },
@@ -21,11 +22,9 @@ export default async function ArchitecturePage({
 
   if (!project) notFound();
 
-  // Hito 5: Buscar el diagrama específico de la pestaña en Supabase
   const activeDiagram = project.diagrams.find(d => d.viewName.toLowerCase() === tab.toLowerCase());
 
-  // Datos de Fallback (los que te gustaron) por si la DB está vacía
-  const defaultNodes = [
+  const defaultNodes: Node[] = [
     { id: 'n1', type: 'techNode', position: { x: 250, y: 0 }, data: { label: 'Next.js Frontend' } },
     { id: 'n2', type: 'cloudNode', position: { x: 250, y: 150 }, data: { label: project.cloudProvider === 'Azure' ? 'Azure App Service' : 'AWS EC2', provider: project.cloudProvider } },
     { id: 'n3', type: 'cloudNode', position: { x: 250, y: 300 }, data: { label: project.cloudProvider === 'Azure' ? 'Azure SQL' : 'Amazon RDS', provider: project.cloudProvider } },
@@ -39,7 +38,6 @@ export default async function ArchitecturePage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-      {/* Tu Header con estilo premium */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
         <div>
           <h2 className="text-primary text-xs font-black tracking-[0.3em] uppercase mb-4 text-center md:text-left">
@@ -57,7 +55,6 @@ export default async function ArchitecturePage({
         </div>
       </div>
 
-      {/* Hito 4: Tabs con navegación por Search Params */}
       <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-8">
         {categories.map((cat) => (
           <Link
@@ -78,8 +75,8 @@ export default async function ArchitecturePage({
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         <div className="xl:col-span-3">
           <FlowViewer 
-            initialNodes={activeDiagram ? (activeDiagram.nodes as any) : defaultNodes} 
-            initialEdges={activeDiagram ? (activeDiagram.edges as any) : []} 
+            initialNodes={activeDiagram ? (activeDiagram.nodes as unknown as Node[]) : defaultNodes} 
+            initialEdges={activeDiagram ? (activeDiagram.edges as unknown as Edge[]) : []} 
             projectName={`${project.name} - ${tab.toUpperCase()}`} 
           />
         </div>

@@ -1,24 +1,22 @@
 "use client";
 
 import React, { useMemo } from 'react';
-import { ReactFlow, Background, Controls, MiniMap, Panel } from '@xyflow/react';
-import { CloudNode, TechNode } from './CustomNodes'; // Importamos los nuevos nodos
+import { ReactFlow, Background, Controls, MiniMap, Panel, type Node, type Edge } from '@xyflow/react';
+import { CloudNode, TechNode } from './CustomNodes'; 
 import '@xyflow/react/dist/style.css';
 
-// Definimos los tipos de nodos personalizados
 const nodeTypes = {
   cloudNode: CloudNode,
   techNode: TechNode,
 };
 
 interface FlowViewerProps {
-  initialNodes: any[];
-  initialEdges: any[];
+  initialNodes: Node[];
+  initialEdges: Edge[];
   projectName: string;
 }
 
 export default function FlowViewer({ initialNodes, initialEdges, projectName }: FlowViewerProps) {
-  // Memoizamos los tipos de nodos por rendimiento
   const types = useMemo(() => nodeTypes, []);
 
   return (
@@ -26,7 +24,7 @@ export default function FlowViewer({ initialNodes, initialEdges, projectName }: 
       <ReactFlow
         nodes={initialNodes}
         edges={initialEdges}
-        nodeTypes={types} // Inyectamos los tipos personalizados
+        nodeTypes={types} 
         fitView
         nodesDraggable={false}
         nodesConnectable={false}
