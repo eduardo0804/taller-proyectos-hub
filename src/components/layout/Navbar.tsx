@@ -7,40 +7,57 @@ import { Menu, X, Home, Users, TrendingUp, Layers, FolderOpen } from 'lucide-rea
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeHash, setActiveHash] = useState("");
+  const [activeSection, setActiveSection] = useState("inicio");
   const pathname = usePathname();
   const params = useParams();
   
   // Obtenemos el slug actual de la URL (si existe)
   const slug = params?.slug as string;
 
+  // Lógica de "Scroll Spy" para detectar dónde está leyendo el usuario
   useEffect(() => {
-    const handleHashChange = () => setActiveHash(window.location.hash);
-    window.addEventListener("hashchange", handleHashChange);
-    setActiveHash(window.location.hash);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+    // Si no estamos en el Home, no necesitamos espiar el scroll del hero/proyectos
+    if (pathname !== '/') {
+      setActiveSection("");
+      return;
+    }
+
+    const handleScroll = () => {
+      const proyectosSection = document.getElementById('proyectos');
+      if (proyectosSection) {
+        const rect = proyectosSection.getBoundingClientRect();
+        // Si el tope de la sección 'proyectos' llega a la mitad superior de la pantalla
+        if (rect.top <= window.innerHeight / 2) {
+          setActiveSection('proyectos');
+        } else {
+          setActiveSection('inicio');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Revisar posición inicial al cargar
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname]);
 
   // Construimos los items dinámicamente basados en el proyecto actual
   const navItems = [
-    { name: 'Inicio', path: '/', hash: "" },
-    { name: 'Proyectos', path: '/#proyectos', hash: "#proyectos" },
+    { name: 'Inicio', path: '/' },
+    { name: 'Proyectos', path: '/#proyectos' },
     { 
       name: 'Equipo', 
       path: slug ? `/proyecto/${slug}/equipo` : '#', 
-      hash: "",
       disabled: !slug 
     },
     { 
       name: 'Avances', 
       path: slug ? `/proyecto/${slug}/avances` : '#', 
-      hash: "",
       disabled: !slug 
     },
     { 
       name: 'Arquitectura', 
       path: slug ? `/proyecto/${slug}/arquitectura` : '#', 
-      hash: "",
       disabled: !slug 
     },
   ];
@@ -54,6 +71,14 @@ const Navbar = () => {
       case 'Arquitectura': return <Layers className="w-4 h-4" />;
       default: return null;
     }
+  };
+
+  // Evaluador inteligente de estado activo
+  const checkIsActive = (itemName: string, itemPath: string) => {
+    if (itemName === 'Inicio') return pathname === '/' && activeSection === 'inicio';
+    if (itemName === 'Proyectos') return pathname === '/' && activeSection === 'proyectos';
+    if (itemPath === '#') return false;
+    return pathname.includes(itemPath);
   };
 
   return (
@@ -75,9 +100,9 @@ const Navbar = () => {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navItems.map((item) => {
-              const isActive = pathname === item.path.split('#')[0] && activeHash === item.hash;
-              
-              if (item.disabled) return null; // No mostramos links de proyecto si no hay un proyecto seleccionado
+              if (item.disabled) return null;
+
+              const isActive = checkIsActive(item.name, item.path);
 
               return (
                 <Link
@@ -99,7 +124,7 @@ const Navbar = () => {
           {/* Mobile Toggle */}
           <button 
             onClick={() => setIsOpen(!isOpen)} 
-            className="md:hidden p-2 rounded-md text-secondary hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 rounded-md text-secondary hover:bg-gray-100 transition-colors focus:outline-none"
             aria-label="Menú principal"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -109,11 +134,12 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-xl border-t border-gray-100 animate-in slide-in-from-top duration-300">
+        <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-2xl border-t border-gray-100 animate-in slide-in-from-top duration-300 z-50">
           <div className="px-4 pt-2 pb-6 space-y-2">
             {navItems.map((item) => {
                if (item.disabled) return null;
-               const isActive = pathname === item.path.split('#')[0] && activeHash === item.hash;
+               
+               const isActive = checkIsActive(item.name, item.path);
                
                return (
                 <Link
