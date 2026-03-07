@@ -2,27 +2,31 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Iniciando carga masiva de 36 integrantes...')
+  console.log('🌱 Iniciando carga masiva de 36 integrantes y actualizando info de proyectos...')
 
   // 1. Asegurar la existencia de los Proyectos
   const legado = await prisma.project.upsert({
     where: { slug: 'legado-fia' },
-    update: {},
+    update: {
+      description: 'Sistema inteligente para la gestión y automatización de horarios académicos EPICS.'
+    },
     create: {
       name: 'Legado Fia',
       slug: 'legado-fia',
-      description: 'Automatización integral de horarios EPICS',
+      description: 'Sistema inteligente para la gestión y automatización de horarios académicos EPICS.',
       cloudProvider: 'Azure'
     }
   })
 
   const nanutech = await prisma.project.upsert({
     where: { slug: 'nanutech' },
-    update: {},
+    update: {
+      description: 'Sistema integral de gestión de flota de camiones, contratos y monitoreo GPS.'
+    },
     create: {
       name: 'NANUTECH',
       slug: 'nanutech',
-      description: 'Control de margen operativo por camión',
+      description: 'Sistema integral de gestión de flota de camiones, contratos y monitoreo GPS.',
       cloudProvider: 'AWS'
     }
   })
@@ -38,7 +42,7 @@ async function main() {
     { fullName: 'VALDIVIA PILLACA BRYAN ARNOLD', email: 'BRYAN_VALDIVIA1@USMP.PE', role: 'Líde DevSecOps', isGlobal: true },
     { fullName: 'LAZARO BRAVO JESUS EDUARDO', email: 'JESUS_LAZARO@USMP.PE', role: 'Líde Gestor de Contenido', isGlobal: true },
 
-    // EQUIPO ASIGNADO A PROYECTOS (Ejemplo de distribución)
+    // EQUIPO ASIGNADO A PROYECTOS
     { fullName: 'ANGULO URIBE SEBASTIAN CESAR', email: 'SEBASTIAN_ANGULO@USMP.PE', role: 'Team DevSecOps', projectId: legado.id },
     { fullName: 'BARRIOS CACERES RODRIGO ANDRES', email: 'RODRIGO_BARRIOS@USMP.PE', role: 'Team QA', projectId: nanutech.id },
     { fullName: 'CAMPOS HUAMAN ANDREA ANGELINA', email: 'ANDREA_CAMPOS2@USMP.PE', role: 'FullStack - Back', projectId: legado.id },
@@ -70,20 +74,39 @@ async function main() {
     { fullName: 'SAM ANTONY ESPINOZA LOPEZ', email: 'SAM_ESPINOZA@USMP.PE', role: 'Team QA', projectId: legado.id }
   ]
 
-  // 3. Ejecutar carga masiva
+  // 3. Ejecutar carga masiva con lógica manual (findFirst -> update o create)
   for (const m of allMembers) {
-    await prisma.teamMember.create({
-      data: {
-        fullName: m.fullName,
-        email: m.email,
-        role: m.role,
-        isGlobalLeader: m.isGlobal || false,
-        projectId: m.projectId || null
-      }
-    })
+    // Buscamos si el integrante ya existe por su nombre completo
+    const existingMember = await prisma.teamMember.findFirst({
+      where: { fullName: m.fullName }
+    });
+
+    if (existingMember) {
+      // Si existe, lo actualizamos usando su ID único
+      await prisma.teamMember.update({
+        where: { id: existingMember.id },
+        data: {
+          role: m.role,
+          projectId: m.projectId || null,
+          isGlobalLeader: m.isGlobal || false,
+          email: m.email
+        }
+      });
+    } else {
+      // Si no existe, lo creamos
+      await prisma.teamMember.create({
+        data: {
+          fullName: m.fullName,
+          email: m.email,
+          role: m.role,
+          isGlobalLeader: m.isGlobal || false,
+          projectId: m.projectId || null
+        }
+      });
+    }
   }
 
-  console.log('✅ Base de datos poblada con 36 integrantes.')
+  console.log('✅ Base de datos poblada y actualizada con la información real de los proyectos.')
 }
 
 main()
