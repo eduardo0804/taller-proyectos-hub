@@ -31,7 +31,7 @@ export default function LandingPage() {
     {
       title: "NANUTECH",
       slug: "nanutech",
-      description: "Plataforma de control logístico y optimización del margen operativo de transporte.",
+      description: "Sistema integral de gestión de flota de camiones, contratos y monitoreo GPS con arquitectura Serverless.",
       provider: "AWS Cloud",
       color: "border-orange-500",
       bg: "hover:bg-orange-50",
@@ -40,10 +40,10 @@ export default function LandingPage() {
   ];
 
   const objetivos = [
-    "Automatizar la generación y actualización documental",
-    "Sincronizar actores y procesos según el ciclo académico", 
-    "Centralizar operaciones desde una única fuente de verdad",
-    "Eliminar duplicidad y errores en la gestión universitaria"
+    "Centralizar y automatizar procesos operativos y logísticos",
+    "Integración de datos en tiempo real (APIs, GPS, Cloud)", 
+    "Proveer dashboards ejecutivos para la toma de decisiones",
+    "Implementar arquitecturas Serverless de alta disponibilidad"
   ];
 
   const stats = [
@@ -115,7 +115,6 @@ export default function LandingPage() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              {/* className movido al div interno */}
               <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 h-full flex flex-col items-center md:items-start text-center md:text-left">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 shrink-0">
                   <Target className="w-5 h-5 text-primary" />
@@ -189,9 +188,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-10">
-            {/* Decano */}
             <motion.div whileHover={{ y: -5 }}>
-              {/* className movido al div interno */}
               <div className="bg-gray-50 rounded-3xl p-8 text-center border border-gray-100 hover:shadow-xl transition-all w-full sm:w-[350px] h-full flex flex-col items-center">
                 <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-primary shadow-lg bg-white shrink-0">
                   <Image 
@@ -215,9 +212,7 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Docente Principal */}
             <motion.div whileHover={{ y: -5 }}>
-              {/* className movido al div interno */}
               <div className="bg-gray-50 rounded-3xl p-8 text-center border border-gray-100 hover:shadow-xl transition-all w-full sm:w-[350px] h-full flex flex-col items-center">
                 <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-primary shadow-lg bg-white shrink-0">
                   <Image 
