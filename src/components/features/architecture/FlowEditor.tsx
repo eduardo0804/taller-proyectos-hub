@@ -7,7 +7,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { CloudNode, TechNode } from './CustomNodes'; 
-import { Save, Plus, Loader2, Settings, Type, Image as ImageIcon } from 'lucide-react';
+import { Save, Plus, Loader2, Settings, Type, Image as ImageIcon, FileText } from 'lucide-react';
 import { saveDiagramState } from '@/app/(admin)/admin-gestion/arquitectura/actions';
 
 const nodeTypes = {
@@ -51,8 +51,9 @@ export default function FlowEditor({
       position: { x: 250, y: Math.random() * 200 + 50 },
       data: { 
         label: type === 'techNode' ? 'Nueva Tecnología' : `Nuevo Servicio ${cloudProvider}`,
+        description: '', // Inicializamos la descripción vacía
         provider: cloudProvider,
-        icon: type === 'techNode' ? 'globe' : 'cloud'
+        icon: 'none' // Por defecto para AS-IS/TO-BE es mejor que empiece sin ícono
       },
     };
     setNodes((nds) => [...nds, newNode]);
@@ -109,8 +110,6 @@ export default function FlowEditor({
     setIsSaving(true);
     setSaveStatus(null);
     
-    // AQUÍ ESTÁ LA MAGIA: Enviamos el array de ReactFlow forzado a ser unknown[] 
-    // para que haga match perfecto con lo que espera el server action.
     const result = await saveDiagramState({ 
       projectId, 
       viewName, 
@@ -142,11 +141,12 @@ export default function FlowEditor({
         
         <div className="flex items-center gap-3">
           <div className="bg-slate-800 rounded-lg p-1 flex gap-1 mr-4 border border-slate-700">
+            {/* Cambié "Web/Tech" por "Caja Simple" ya que ahora sirve para procesos */}
             <button onClick={() => onAddNode('techNode')} className="p-2 hover:bg-slate-700 rounded flex items-center gap-2 text-xs font-bold">
-              <Plus size={14} className="text-purple-400" /> Web/Tech
+              <Plus size={14} className="text-purple-400" /> Caja Simple
             </button>
             <button onClick={() => onAddNode('cloudNode')} className="p-2 hover:bg-slate-700 rounded flex items-center gap-2 text-xs font-bold">
-              <Plus size={14} className="text-orange-400" /> Cloud
+              <Plus size={14} className="text-orange-400" /> Cloud Node
             </button>
           </div>
 
@@ -197,23 +197,36 @@ export default function FlowEditor({
             {selectedNode && (
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Type className="w-3 h-3"/> Texto de la Caja</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><Type className="w-3 h-3"/> Título de la Caja</label>
                   <input 
                     type="text" 
                     value={selectedNode.data?.label as string || ''}
                     onChange={(e) => updateNodeData('label', e.target.value)}
-                    className="w-full p-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none"
-                    placeholder="Ej. Next.js Frontend"
+                    className="w-full p-2.5 text-sm font-bold rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                    placeholder="Ej. Registro Manual"
+                  />
+                </div>
+
+                {/* NUEVO CAMPO DE DESCRIPCIÓN */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><FileText className="w-3 h-3"/> Descripción (Opcional)</label>
+                  <textarea 
+                    rows={3}
+                    value={selectedNode.data?.description as string || ''}
+                    onChange={(e) => updateNodeData('description', e.target.value)}
+                    className="w-full p-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none resize-none"
+                    placeholder="Ej. El docente llena un Excel y lo envía por correo..."
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><ImageIcon className="w-3 h-3"/> Icono</label>
                   <select 
-                    value={selectedNode.data?.icon as string || 'globe'}
+                    value={selectedNode.data?.icon as string || 'none'}
                     onChange={(e) => updateNodeData('icon', e.target.value)}
                     className="w-full p-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none bg-white"
                   >
+                    <option value="none">📝 Sin Icono (Solo Texto)</option>
                     <option value="globe">🌐 Web / Frontend</option>
                     <option value="server">🖥️ Servidor / Backend</option>
                     <option value="database">🗄️ Base de Datos</option>
@@ -238,7 +251,7 @@ export default function FlowEditor({
                     value={selectedEdge.label as string || ''}
                     onChange={(e) => updateEdgeLabel(e.target.value)}
                     className="w-full p-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none"
-                    placeholder="Ej. HTTPS / GraphQL / SQL Query"
+                    placeholder="Ej. Envía documento a..."
                   />
                 </div>
                 <div className="p-3 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100">
