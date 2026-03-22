@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 
 export async function saveDiagramState(data: {
   projectId: string;
-  viewName: string; // 'frontend', 'backend', o 'infra'
+  viewName: string; // 'frontend', 'backend', 'infra', o 'as-is-to-be'
   nodes: unknown[]; // Recibe arreglos genéricos desde el cliente
   edges: unknown[]; // Recibe arreglos genéricos desde el cliente
 }) {

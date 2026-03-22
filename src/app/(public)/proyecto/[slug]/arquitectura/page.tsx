@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import FlowViewer from "@/components/features/architecture/FlowViewer";
 import Link from "next/link";
-import { Info, Layout, Server, ShieldCheck } from "lucide-react";
+import { Info, Layout, Server, ShieldCheck, ArrowRightLeft } from "lucide-react";
 import { type Node, type Edge } from "@xyflow/react";
 
 export default async function ArchitecturePage({ 
@@ -34,6 +34,7 @@ export default async function ArchitecturePage({
     { id: 'frontend', label: 'Frontend', icon: <Layout className="w-4 h-4" /> },
     { id: 'backend', label: 'Backend', icon: <Server className="w-4 h-4" /> },
     { id: 'infra', label: 'Infraestructura', icon: <ShieldCheck className="w-4 h-4" /> },
+    { id: 'as-is-to-be', label: 'AS-IS y TO-BE', icon: <ArrowRightLeft className="w-4 h-4" /> },
   ];
 
   return (

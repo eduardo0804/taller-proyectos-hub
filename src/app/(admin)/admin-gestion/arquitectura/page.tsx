@@ -78,6 +78,7 @@ export default async function ArchitectureEditorPage({
               <option value="frontend">Frontend</option>
               <option value="backend">Backend</option>
               <option value="infra">DevSecOps / Infraestructura</option>
+              <option value="as-is-to-be">AS-IS y TO-BE</option>
             </select>
           </div>
 
