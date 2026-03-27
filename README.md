@@ -6,7 +6,7 @@ Plataforma Full-Stack de alta disponibilidad diseñada para la difusión, gesti�
 
 Esta plataforma está dividida en dos grandes módulos, aplicando el patrón de diseño de separación de responsabilidades (Route Groups):
 
-### 🌍 1. Zona Pública (Frontend de Difusión)
+### 🌍 Zona Pública (Frontend de Difusión)
 
 * **Diagramas Interactivos (Fase 3):** Visor de arquitectura de software renderizado con React Flow, permitiendo explorar las capas de Frontend, Backend e Infraestructura.
 * **Timeline de Sprints:** Visualización dinámica de los avances semanales bajo metodología Scrum, calculando el progreso general y por áreas (Liderazgo, Desarrollo, Infraestructura, QA).
