@@ -46,11 +46,11 @@ export default async function ArchitectureEditorPage({
           Gestor de Arquitectura
         </h2>
         <p className="text-slate-500 mt-2">
-          Diseña los diagramas de nube arrastrando componentes. Los cambios se reflejarán en vivo en la plataforma pública.
+          Diseña los diagramas de nube o procesos arrastrando componentes. Los cambios se reflejarán en vivo en la plataforma pública.
         </p>
       </div>
 
-      {/* Barra de Controles (Selectores usando un formulario nativo GET) */}
+      {/* Barra de Controles */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <form method="GET" className="flex flex-col md:flex-row gap-4 items-end">
           <div className="w-full space-y-2">
@@ -78,7 +78,8 @@ export default async function ArchitectureEditorPage({
               <option value="frontend">Frontend</option>
               <option value="backend">Backend</option>
               <option value="infra">DevSecOps / Infraestructura</option>
-              <option value="as-is-to-be">AS-IS y TO-BE</option>
+              <option value="as-is">Modelo AS-IS</option>
+              <option value="to-be">Modelo TO-BE</option>
             </select>
           </div>
 

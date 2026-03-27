@@ -6,9 +6,9 @@ import { Prisma } from "@prisma/client";
 
 export async function saveDiagramState(data: {
   projectId: string;
-  viewName: string; // 'frontend', 'backend', 'infra', o 'as-is-to-be'
-  nodes: unknown[]; // Recibe arreglos genéricos desde el cliente
-  edges: unknown[]; // Recibe arreglos genéricos desde el cliente
+  viewName: string; // 'frontend', 'backend', 'infra', 'as-is', o 'to-be'
+  nodes: unknown[]; 
+  edges: unknown[]; 
 }) {
   try {
     const existingDiagram = await prisma.diagramState.findFirst({
@@ -22,7 +22,6 @@ export async function saveDiagramState(data: {
       await prisma.diagramState.update({
         where: { id: existingDiagram.id },
         data: { 
-          // Casteamos a InputJsonValue para que Prisma lo acepte sin errores
           nodes: data.nodes as Prisma.InputJsonValue, 
           edges: data.edges as Prisma.InputJsonValue 
         }

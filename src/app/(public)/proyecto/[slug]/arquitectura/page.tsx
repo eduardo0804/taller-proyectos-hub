@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import FlowViewer from "@/components/features/architecture/FlowViewer";
 import Link from "next/link";
-import { Info, Layout, Server, ShieldCheck, ArrowRightLeft } from "lucide-react";
+import { Info, Layout, Server, ShieldCheck, History, Rocket } from "lucide-react";
 import { type Node, type Edge } from "@xyflow/react";
 
 export default async function ArchitecturePage({ 
@@ -34,7 +34,8 @@ export default async function ArchitecturePage({
     { id: 'frontend', label: 'Frontend', icon: <Layout className="w-4 h-4" /> },
     { id: 'backend', label: 'Backend', icon: <Server className="w-4 h-4" /> },
     { id: 'infra', label: 'Infraestructura', icon: <ShieldCheck className="w-4 h-4" /> },
-    { id: 'as-is-to-be', label: 'AS-IS y TO-BE', icon: <ArrowRightLeft className="w-4 h-4" /> },
+    { id: 'as-is', label: 'Modelo AS-IS', icon: <History className="w-4 h-4" /> },
+    { id: 'to-be', label: 'Modelo TO-BE', icon: <Rocket className="w-4 h-4" /> },
   ];
 
   return (
@@ -87,8 +88,8 @@ export default async function ArchitecturePage({
              <Info className="w-4 h-4 mr-2 text-primary" /> Info de Capa
            </h4>
            <p className="text-xs text-gray-500 leading-relaxed">
-             Estás visualizando la capa de <strong>{tab}</strong>. Los nodos animados indican el flujo de datos 
-             en tiempo real a través de la red de {project.cloudProvider}.
+             Estás visualizando la capa de <strong>{tab.toUpperCase()}</strong>. Los nodos indican el flujo de datos 
+             o procesos.
            </p>
         </aside>
       </div>

@@ -51,9 +51,9 @@ export default function FlowEditor({
       position: { x: 250, y: Math.random() * 200 + 50 },
       data: { 
         label: type === 'techNode' ? 'Nueva Tecnología' : `Nuevo Servicio ${cloudProvider}`,
-        description: '', // Inicializamos la descripción vacía
+        description: '',
         provider: cloudProvider,
-        icon: 'none' // Por defecto para AS-IS/TO-BE es mejor que empiece sin ícono
+        icon: 'none'
       },
     };
     setNodes((nds) => [...nds, newNode]);
@@ -141,7 +141,6 @@ export default function FlowEditor({
         
         <div className="flex items-center gap-3">
           <div className="bg-slate-800 rounded-lg p-1 flex gap-1 mr-4 border border-slate-700">
-            {/* Cambié "Web/Tech" por "Caja Simple" ya que ahora sirve para procesos */}
             <button onClick={() => onAddNode('techNode')} className="p-2 hover:bg-slate-700 rounded flex items-center gap-2 text-xs font-bold">
               <Plus size={14} className="text-purple-400" /> Caja Simple
             </button>
@@ -207,7 +206,6 @@ export default function FlowEditor({
                   />
                 </div>
 
-                {/* NUEVO CAMPO DE DESCRIPCIÓN */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1"><FileText className="w-3 h-3"/> Descripción (Opcional)</label>
                   <textarea 
@@ -226,7 +224,8 @@ export default function FlowEditor({
                     onChange={(e) => updateNodeData('icon', e.target.value)}
                     className="w-full p-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none bg-white"
                   >
-                    <option value="none">📝 Sin Icono (Solo Texto)</option>
+                    <option value="none">📝 Sin Icono</option>
+                    <option disabled>--- Básicos ---</option>
                     <option value="globe">🌐 Web / Frontend</option>
                     <option value="server">🖥️ Servidor / Backend</option>
                     <option value="database">🗄️ Base de Datos</option>
@@ -237,6 +236,15 @@ export default function FlowEditor({
                     <option value="mobile">📱 Aplicación Móvil</option>
                     <option value="shield">🛡️ Seguridad / WAF</option>
                     <option value="lock">🔒 Autenticación</option>
+                    <option disabled>--- Procesos ---</option>
+                    <option value="document">📄 Documento / Archivo</option>
+                    <option value="user">👤 Usuario / Actor</option>
+                    <option value="mail_light">✉️ Email Claro</option>
+                    <option value="mail_dark">📧 Email Oscuro</option>
+                    <option value="plus">➕ Símbolo Plus</option>
+                    <option value="circle_red">🔴 Círculo Rojo (Error/Fin)</option>
+                    <option value="circle_green">🟢 Círculo Verde (OK/Inicio)</option>
+                    <option value="diamond">💠 Rombo (Decisión)</option>
                   </select>
                 </div>
               </div>
