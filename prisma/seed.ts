@@ -2,111 +2,172 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Iniciando carga masiva de 36 integrantes y actualizando info de proyectos...')
+  console.log('🌱 Iniciando carga masiva hiper-detallada de Sprints 0 y 1...')
 
-  // 1. Asegurar la existencia de los Proyectos
   const legado = await prisma.project.upsert({
     where: { slug: 'legado-fia' },
-    update: {
-      description: 'Sistema inteligente para la gestión y automatización de horarios académicos EPICS.'
-    },
-    create: {
-      name: 'Legado Fia',
-      slug: 'legado-fia',
-      description: 'Sistema inteligente para la gestión y automatización de horarios académicos EPICS.',
-      cloudProvider: 'Azure'
-    }
+    update: { description: 'Sistema inteligente para la gestión y automatización de horarios académicos EPICS.' },
+    create: { name: 'Legado Fia', slug: 'legado-fia', description: 'Sistema...', cloudProvider: 'Azure' }
   })
 
   const nanutech = await prisma.project.upsert({
     where: { slug: 'nanutech' },
-    update: {
-      description: 'Sistema integral de gestión de flota de camiones, contratos y monitoreo GPS.'
-    },
-    create: {
-      name: 'NANUTECH',
-      slug: 'nanutech',
-      description: 'Sistema integral de gestión de flota de camiones, contratos y monitoreo GPS.',
-      cloudProvider: 'AWS'
-    }
+    update: { description: 'Sistema integral de gestión de flota de camiones, contratos y monitoreo GPS.' },
+    create: { name: 'NANUTECH', slug: 'nanutech', description: 'Sistema...', cloudProvider: 'AWS' }
   })
 
-  // 2. Definición de todo el equipo (36 integrantes)
-  const allMembers = [
-    // LIDERAZGO GLOBAL (isGlobalLeader: true)
-    { fullName: 'CHAMOCHUMBI SALINAS ALDO ANDRE', email: 'ALDO_CHAMOCHUMBI@USMP.PE', role: 'Líder Scrum', isGlobal: true },
-    { fullName: 'CHOQUE VILLALTA WALTER SMITH', email: 'WALTER_CHOQUE1@USMP.PE', role: 'Líder UX', isGlobal: true },
-    { fullName: 'CHUQUICAJA PALACIOS VERONICA SOFIA', email: 'VERONICA_CHUQUICAJA@USMP.PE', role: 'Líder QA', isGlobal: true },
-    { fullName: 'PALOMINO ZARATE PEDRO ARMANDO EDUARDO', email: 'PEDRO_PALOMINO3@USMP.PE', role: 'Líder Ingeniero de nube', isGlobal: true },
-    { fullName: 'RODRIGUEZ DE LA ROCA JULIO DANIEL', email: 'JULIO_RODRIGUEZ8@USMP.PE', role: 'Arquitecto', isGlobal: true },
-    { fullName: 'VALDIVIA PILLACA BRYAN ARNOLD', email: 'BRYAN_VALDIVIA1@USMP.PE', role: 'Líde DevSecOps', isGlobal: true },
-    { fullName: 'LAZARO BRAVO JESUS EDUARDO', email: 'JESUS_LAZARO@USMP.PE', role: 'Líde Gestor de Contenido', isGlobal: true },
-
-    // EQUIPO ASIGNADO A PROYECTOS
-    { fullName: 'ANGULO URIBE SEBASTIAN CESAR', email: 'SEBASTIAN_ANGULO@USMP.PE', role: 'Team DevSecOps', projectId: legado.id },
-    { fullName: 'BARRIOS CACERES RODRIGO ANDRES', email: 'RODRIGO_BARRIOS@USMP.PE', role: 'Team QA', projectId: nanutech.id },
-    { fullName: 'CAMPOS HUAMAN ANDREA ANGELINA', email: 'ANDREA_CAMPOS2@USMP.PE', role: 'FullStack - Back', projectId: legado.id },
-    { fullName: 'ESCALANTE MAGUIÑA JAIR JOSUE', email: 'JAIR_ESCALANTE@USMP.PE', role: 'UX', projectId: legado.id },
-    { fullName: 'ESTRADA BARRIENTOS JEAN CARLOS', email: 'JEAN_ESTRADA@USMP.PE', role: 'FullStack - Back', projectId: nanutech.id },
-    { fullName: 'FEBRES DELGADO OSCAR ANDRE', email: 'OSCAR_FEBRES@USMP.PE', role: 'Team UX', projectId: nanutech.id },
-    { fullName: 'HERNANDEZ RAMIREZ LUIS ALBERTO', email: 'LUIS_HERNANDEZ7@USMP.PE', role: 'Team QA', projectId: legado.id },
-    { fullName: 'HUAMAN CARLOS ABRAHAM JEREMIAS', email: 'ABRAHAM_HUAMAN1@USMP.PE', role: 'FullStack - Front', projectId: nanutech.id },
-    { fullName: 'JAUREGUI CACERES JOSMER', email: 'JOSMER_JAUREGUI@USMP.PE', role: 'FullStack - Back', projectId: legado.id },
-    { fullName: 'LEZMA CHUCHÓN SAMANTHA ALEJANDRA', email: 'SAMANTHA_LEZMA@USMP.PE', role: 'FullStack - Back', projectId: nanutech.id },
-    { fullName: 'LOPEZ BAZAN RENZO FABIAN', email: 'RENZO_LOPEZ4@USMP.PE', role: 'FullStack - Front', projectId: legado.id },
-    { fullName: 'MENESES MORENO HUGO FRANCISCO', email: '', role: 'Team DevSecOps', projectId: nanutech.id },
-    { fullName: 'MORALES FLORES OSKAR ANDRE', email: 'OSKAR_MORALES@USMP.PE', role: 'Team QA', projectId: legado.id },
-    { fullName: 'NUÑEZ GONZALES MATHIAS ALONSO', email: 'MATHIAS_NUNEZ@USMP.PE', role: 'Team UX', projectId: nanutech.id },
-    { fullName: 'PACO CUSI ENRIQUE MIGUEL', email: 'ENRIQUE_PACO@USMP.PE', role: 'Fullstack', projectId: legado.id },
-    { fullName: 'PALOMINO FALCON ANGEL AARON ARTURO', email: 'ANGEL_PALOMINO1@USMP.PE', role: 'Fullstack', projectId: nanutech.id },
-    { fullName: 'QUEZADA PICHIHUA RONALD NICOLAS', email: 'RONALD_QUEZADA@USMP.PE', role: 'FullStack - Back', projectId: legado.id },
-    { fullName: 'QUISPE MENDIVIL JORGE LUIS', email: '', role: 'Fullstack', projectId: nanutech.id },
-    { fullName: 'RIOS MACHACA GIOVANY ALDAIR', email: 'GIOVANY_RIOS@USMP.PE', role: 'Fullstack', projectId: legado.id },
-    { fullName: 'RODRIGUEZ VASQUEZ JIMENA ARELLY', email: 'JIMENA_RODRIGUEZ5@USMP.PE', role: 'FullStack - Back', projectId: nanutech.id },
-    { fullName: 'SALAZAR CHUPURGO CRISTIAN JOSIMAR EDU', email: 'CRISTIAN_SALAZAR1@USMP.PE', role: 'Fullstack', projectId: legado.id },
-    { fullName: 'SALVATIERRA TORRES ABEL DAVID', email: 'ABEL_SALVATIERRA@USMP.PE', role: 'FullStack - Front', projectId: nanutech.id },
-    { fullName: 'SANTA CRUZ VARGAS AYLIN ANTHUANETTE', email: 'AYLIN_SANTACRUZ@USMP.PE', role: 'FullStack - Back', projectId: legado.id },
-    { fullName: 'SUAREZ RAMOS LUIS ANTONIO', email: 'LUIS_SUAREZ5@USMP.PE', role: 'FullStack - Back', projectId: nanutech.id },
-    { fullName: 'TAFUR TRUJILLO VICTOR MANUEL', email: 'VICTOR_TAFUR@USMP.PE', role: 'FullStack - Back', projectId: legado.id },
-    { fullName: 'TOVAR SALAZAR JUNIOR JESUS ALEJANDRO', email: 'JUNIOR_TOVAR@USMP.PE', role: 'FullStack - Front', projectId: nanutech.id },
-    { fullName: 'VILCA VARGAS IRWIN EDISON', email: 'IRWIN_VILCA@USMP.PE', role: 'UX', projectId: legado.id },
-    { fullName: 'VILLEGAS MAMANI JOSE LUIS', email: 'JOSE_VILLEGAS1@USMP.PE', role: 'FullStack - Front', projectId: nanutech.id },
-    { fullName: 'SAM ANTONY ESPINOZA LOPEZ', email: 'SAM_ESPINOZA@USMP.PE', role: 'Team QA', projectId: legado.id }
-  ]
-
-  // 3. Ejecutar carga masiva con lógica manual (findFirst -> update o create)
-  for (const m of allMembers) {
-    // Buscamos si el integrante ya existe por su nombre completo
-    const existingMember = await prisma.teamMember.findFirst({
-      where: { fullName: m.fullName }
-    });
-
-    if (existingMember) {
-      // Si existe, lo actualizamos usando su ID único
-      await prisma.teamMember.update({
-        where: { id: existingMember.id },
-        data: {
-          role: m.role,
-          projectId: m.projectId || null,
-          isGlobalLeader: m.isGlobal || false,
-          email: m.email
-        }
-      });
-    } else {
-      // Si no existe, lo creamos
-      await prisma.teamMember.create({
-        data: {
-          fullName: m.fullName,
-          email: m.email,
-          role: m.role,
-          isGlobalLeader: m.isGlobal || false,
-          projectId: m.projectId || null
-        }
-      });
+  // Sprints Hiper-Detallados
+  const sprints = [
+    // ==========================================
+    // LEGADO FIA - SPRINT 0 (Semanas 1, 2, 3, 4)
+    // ==========================================
+    {
+      projectId: legado.id, sprintNumber: 0,
+      title: "Planificación Base, Arquitectura y Ceremonias Ágiles",
+      status: "Completado", progress: 100, dateRange: "Semanas 1, 2, 3 y 4",
+      description: "Fase de cimentación del proyecto. Se establecieron los marcos de trabajo, repositorios, metodologías de testing y diseño de la arquitectura base orientada a microfrontends en Azure.",
+      objectives: [
+        "Definición formal del Product Vision Board y el MVP del sistema",
+        "Diseño de la arquitectura de alto nivel (C4 / ARC42) y ADRs",
+        "Estructuración de repositorios en GitHub con GitFlow",
+        "Diseño de interfaces en Figma (Bocetos y Prototipos UI/UX)",
+        "Configuración del entorno de Azure DevOps (Boards, Epics, HUs)",
+        "Elaboración del plan y estrategia de pruebas QA"
+      ],
+      achievements: [
+        "Product Backlog priorizado y ceremonias Scrum definidas",
+        "Entrevistas a stakeholders completadas (insights documentados)",
+        "Modelo de datos inicial (ER) y diseño de APIs (Swagger) establecidos",
+        "Definición de Definition of Ready (DoR) y Definition of Done (DoD) aprobada",
+        "Presupuestos y recursos de Azure Functions/App Services costeados"
+      ],
+      blockers: [
+        "Retrasos iniciales en UX por problemas en mapeo de procesos (requirió apoyo de Tester)",
+        "Costo elevado en Azure Test Plans obligó a pivotar herramientas a Cypress/Postman"
+      ],
+      nextSteps: [
+        "Iniciar desarrollo activo de HUs del Sprint 1",
+        "Implementar el login con cuenta institucional"
+      ],
+      areasProgress: [
+        { area: "Liderazgo y Producto", progreso: 100, actividades: ["Definición del marco Scrum", "Configuración Azure DevOps", "Priorización de Backlog"], responsables: ["Product Owner", "Scrum Master"] },
+        { area: "Arquitectura y DevSecOps", progreso: 100, actividades: ["Diagramas C4 y ADR", "Configuración GitHub Actions", "Definición Stack (Azure)"], responsables: ["Arquitecto", "Líder DevSecOps"] },
+        { area: "UX/UI", progreso: 100, actividades: ["Mapas de empatía", "Customer Journey", "Wireframes en Figma"], responsables: ["Líder UX"] }
+      ]
+    },
+    // ==========================================
+    // LEGADO FIA - SPRINT 1 (Semanas 5, 6, 7)
+    // ==========================================
+    {
+      projectId: legado.id, sprintNumber: 1,
+      title: "Módulo Core: Asignaciones, Sílabos y Autenticación",
+      status: "Completado", progress: 100, dateRange: "Semanas 5, 6 y 7",
+      description: "Desarrollo del motor principal del sistema. Se construyeron los flujos de visualización de asignaciones, gestión de contenido conceptual y la exportación de sílabos institucionales, integrando roles dinámicos.",
+      objectives: [
+        "HU07: Visualizar Asignaciones (Filtros, búsquedas y CRUD base)",
+        "HU13: Programar Contenido Conceptual por semana validado",
+        "HU14: Visualizar Asignaciones como Docente (Filtro por estado Aprobado)",
+        "HU25: Exportar Sílabo a formato PDF seguro",
+        "HU26: Importar Sílabos con firma en PDF y persistencia de metadatos"
+      ],
+      achievements: [
+        "Integración exitosa de Login con cuenta institucional y validación de 3 roles",
+        "Filtros de búsqueda por código de asignatura operando en tiempo real",
+        "Endpoints estandarizados para descarga y vista previa de impresión (PDF)",
+        "Restricciones de seguridad por rol implementadas (Ej. Solo el director cambia estados)",
+        "Creación de pruebas unitarias y de integración para las 5 HUs"
+      ],
+      blockers: [
+        "Retiro temporal de HU de departamento académico por reasignación de estimaciones",
+        "Inactividad temporal de recursos Back/Front requirió redistribución de tareas",
+        "Nomenclatura de algunas variables detectadas en QA requerirán refactorización menor"
+      ],
+      nextSteps: [
+        "Iniciar Sprint 2 enfocando en herencia de sílabos",
+        "Refactorizar nombres de variables reportadas por QA"
+      ],
+      areasProgress: [
+        { area: "Desarrollo FullStack", progreso: 100, actividades: ["Desarrollo de Endpoints (HU07, 13, 14)", "Implementación de generación PDF", "Login Institucional"], responsables: ["Equipo Backend", "Equipo Frontend"] },
+        { area: "Quality Assurance (QA)", progreso: 100, actividades: ["Testeo de variables", "Validación de permisos por rol", "Ejecución de pruebas unitarias"], responsables: ["Equipo QA"] }
+      ]
+    },
+    // ==========================================
+    // NANUTECH - SPRINT 0 (Semanas 1, 2, 3, 4)
+    // ==========================================
+    {
+      projectId: nanutech.id, sprintNumber: 0,
+      title: "Modelado Serverless, Presupuestos y Diseño de Producto",
+      status: "Completado", progress: 100, dateRange: "Semanas 1, 2, 3 y 4",
+      description: "Fase fundacional enfocada en estructurar el modelo Serverless en AWS, diseñar la base de datos relacional y prototipar la App de Choferes para registro rápido de jornadas.",
+      objectives: [
+        "Definición del MVP y alcance técnico del sistema de flota",
+        "Modelado de base de datos RDS PostgreSQL (Entidades: Trucks, Contracts)",
+        "Diseño de la arquitectura API-Driven y Serverless (Lambda + API Gateway)",
+        "Prototipado en Figma de la App Móvil y Dashboard Web",
+        "Estrategia de branching y CI/CD en GitHub Actions"
+      ],
+      achievements: [
+        "Stack tecnológico validado (React Native + Node.js + RDS)",
+        "Infraestructura base creada y roles IAM configurados en AWS",
+        "Criterios de Aceptación (DoD) formalizados para el equipo técnico",
+        "Presupuestos operativos cloud aprobados por stakeholders"
+      ],
+      blockers: [
+        "Curva de aprendizaje inicial en servicios serverless (superada con capacitaciones)"
+      ],
+      nextSteps: [
+        "Iniciar desarrollo del módulo de autenticación",
+        "Desarrollar endpoints de App Chofer"
+      ],
+      areasProgress: [
+        { area: "Ingeniería Cloud / DevSecOps", progreso: 100, actividades: ["Setup AWS Lambda y API Gateway", "Configuración IAM y Secretos", "Pipeline inicial CI/CD"], responsables: ["Arquitecto", "Ing. Nube", "DevSecOps"] },
+        { area: "UX/UI", progreso: 100, actividades: ["Flujos de usuario (App Chofer)", "Wireframes del Dashboard"], responsables: ["Líder UX"] }
+      ]
+    },
+    // ==========================================
+    // NANUTECH - SPRINT 1 (Semanas 5, 6, 7)
+    // ==========================================
+    {
+      projectId: nanutech.id, sprintNumber: 1,
+      title: "Módulo Core: Autenticación Cognito y Jornada Logística",
+      status: "Completado", progress: 100, dateRange: "Semanas 5, 6 y 7",
+      description: "Construcción del sistema de accesos seguro y el flujo principal de operación del chofer en terreno. El código ha superado todas las barreras de DevSecOps y QA.",
+      objectives: [
+        "HU1: Sistema de recuperación de cuenta (Chofer y Administrador)",
+        "HU2: Registro de nueva jornada por Administrador de Operaciones",
+        "HU3: Marca de inicio y fin de turno (Asignada al Chofer de camión)"
+      ],
+      achievements: [
+        "Validación E2E del flujo de Login usando AWS Cognito (Retorno de JWT Token)",
+        "Más de 27 pruebas unitarias aprobadas (9+ pruebas específicas por cada HU)",
+        "Bloqueo automático de cuenta por múltiples intentos fallidos implementado",
+        "Pull Request aprobado por DevSecOps y desplegado exitosamente en AWS Cloud",
+        "Validación de base de datos estructural y funcionalidad de botones"
+      ],
+      blockers: [
+        "Cambio de versión en la HU3 previo al inicio por inclusión de ícono de observaciones",
+        "Ajustes de dominio local requeridos durante pruebas de recuperación"
+      ],
+      nextSteps: [
+        "Iniciar Sprint 2 enfocado en Módulo de Contratos y Tarifas",
+        "Preparar ambiente para integración con APIs de GPS"
+      ],
+      areasProgress: [
+        { area: "Desarrollo y DevSecOps", progreso: 100, actividades: ["Integración Cognito JWT", "Endpoints de Jornada", "Paso a producción (Cloud)"], responsables: ["Fullstack Back", "Ing. Nube"] },
+        { area: "Quality Assurance (QA)", progreso: 100, actividades: ["Pruebas de integración (HU1+2, HU2+3)", "Validación de flujos de error (Cuentas bloqueadas)", "Testing Estructural (Jest/Pytest)"], responsables: ["Equipo QA"] }
+      ]
     }
+  ];
+
+  for (const sp of sprints) {
+    await prisma.advanceReport.upsert({
+      where: { projectId_sprintNumber: { projectId: sp.projectId, sprintNumber: sp.sprintNumber } },
+      update: sp,
+      create: sp
+    });
   }
 
-  console.log('✅ Base de datos poblada y actualizada con la información real de los proyectos.')
+  console.log('✅ Base de datos poblada exitosamente.')
 }
 
 main()
