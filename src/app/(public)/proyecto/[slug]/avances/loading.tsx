@@ -24,13 +24,10 @@ export default function LoadingAdvances() {
       <div className="space-y-12">
         {[1, 2].map((i) => (
           <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            {/* Header de tarjeta */}
             <div className="bg-gray-100 h-24 w-full"></div>
-            {/* Cuerpo de tarjeta */}
             <div className="p-8 space-y-6">
               <div className="h-4 bg-gray-200 rounded-full w-full"></div>
               <div className="h-4 bg-gray-200 rounded-full w-5/6"></div>
-              
               <div className="grid md:grid-cols-2 gap-8 pt-4">
                 <div className="h-32 bg-gray-50 rounded-xl"></div>
                 <div className="h-32 bg-gray-50 rounded-xl"></div>

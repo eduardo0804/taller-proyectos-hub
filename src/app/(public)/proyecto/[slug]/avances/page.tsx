@@ -11,7 +11,8 @@ import {
   Trophy,
   ArrowRight,
   Users,
-  Calendar
+  Calendar,
+  TriangleAlert
 } from "lucide-react";
 
 type AreaProgress = {
@@ -28,16 +29,19 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
     where: { slug },
     include: {
       advances: {
-        orderBy: { weekNumber: 'desc' }
+        orderBy: { sprintNumber: 'desc' }
       }
     }
   });
 
   if (!project) notFound();
 
-  const totalWeeks = 16;
-  const completedWeeks = project.advances.filter(a => a.status === "Completado").length;
-  const progressPercentage = Math.round((completedWeeks / totalWeeks) * 100);
+  // El ciclo universitario tiene alrededor de 4 Sprints principales (más el Sprint 0)
+  // Total de sprints evaluables = 5 (0, 1, 2, 3, 4)
+  const totalSprints = 5; 
+  const completedSprints = project.advances.filter(a => a.status === "Completado").length;
+  // Calculamos el progreso como porcentaje de los sprints completados sobre el total
+  const progressPercentage = Math.min(Math.round((completedSprints / totalSprints) * 100), 100);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -51,14 +55,14 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
             Progreso de {project.name}
           </h1>
           <p className="mt-4 text-gray-500 max-w-xl mx-auto md:mx-0">
-            Visualización detallada de los hitos alcanzados durante las 16 semanas de desarrollo bajo la metodología Scrum.
+            Visualización detallada de los hitos y entregables logrados en cada iteración bajo la metodología Scrum.
           </p>
         </div>
 
         <div className="bg-white p-8 rounded-3xl shadow-xl border-b-4 border-primary text-center relative overflow-hidden">
           <TrendingUp className="absolute -top-4 -right-4 w-24 h-24 text-primary/5 rotate-12" />
           <div className="text-5xl font-black text-secondary mb-2">{progressPercentage}%</div>
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Sprints Completados</div>
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Avance del Proyecto</div>
           <div className="w-full bg-gray-100 h-2 rounded-full mt-6 overflow-hidden">
              <div 
                className="bg-primary h-full transition-all duration-1000" 
@@ -76,7 +80,9 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
           </div>
         ) : (
           project.advances.map((advance) => {
+            // TypeScript ahora conoce perfectamente qué es advance.areasProgress y advance.blockers
             const areas = (advance.areasProgress || []) as unknown as AreaProgress[];
+            const blockersList = advance.blockers || []; // Eliminado el "as any"
 
             return (
               <div key={advance.id} className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden flex flex-col group">
@@ -86,7 +92,7 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                   
                   <div className="z-10 relative">
                     <h2 className="text-3xl font-black mb-2 flex items-center gap-3">
-                      Semana {advance.weekNumber}
+                      Sprint {advance.sprintNumber}
                     </h2>
                     {advance.dateRange && (
                       <p className="text-white/80 text-sm flex items-center font-medium mb-3">
@@ -121,7 +127,7 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                   <div className="grid md:grid-cols-2 gap-8">
                     {advance.objectives.length > 0 && (
                       <div>
-                        <h4 className="flex items-center text-primary font-black mb-4 uppercase text-sm tracking-widest"><Target className="w-5 h-5 mr-2" /> Objetivos de la Semana</h4>
+                        <h4 className="flex items-center text-primary font-black mb-4 uppercase text-sm tracking-widest"><Target className="w-5 h-5 mr-2" /> Objetivos de la Iteración</h4>
                         <ul className="space-y-3">
                           {advance.objectives.map((obj, i) => (
                             <li key={i} className="flex text-gray-700"><span className="text-primary font-black mr-3">•</span> <span className="leading-snug">{obj}</span></li>
@@ -132,7 +138,7 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
 
                     {advance.achievements.length > 0 && (
                       <div>
-                        <h4 className="flex items-center text-green-600 font-black mb-4 uppercase text-sm tracking-widest"><Trophy className="w-5 h-5 mr-2" /> Logros Alcanzados</h4>
+                        <h4 className="flex items-center text-green-600 font-black mb-4 uppercase text-sm tracking-widest"><Trophy className="w-5 h-5 mr-2" /> Logros y Entregables</h4>
                         <ul className="space-y-3">
                           {advance.achievements.map((ach, i) => (
                             <li key={i} className="flex text-gray-700 bg-green-50 p-2.5 rounded-lg border border-green-100"><CheckCircle2 className="w-5 h-5 text-green-500 mr-3 shrink-0" /> <span className="leading-snug font-medium">{ach}</span></li>
@@ -141,6 +147,17 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                       </div>
                     )}
                   </div>
+
+                  {blockersList.length > 0 && (
+                    <div className="bg-amber-50/50 border border-amber-200 rounded-2xl p-6">
+                      <h4 className="flex items-center text-amber-700 font-black mb-4 text-lg"><TriangleAlert className="w-5 h-5 mr-2" /> Blockers e Impedimentos</h4>
+                      <ul className="space-y-3">
+                        {blockersList.map((blocker: string, i: number) => (
+                          <li key={i} className="flex text-amber-800 text-sm font-medium"><TriangleAlert className="w-4 h-4 text-amber-500 mr-3 shrink-0 mt-0.5" /> <span className="leading-snug">{blocker}</span></li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {areas.length > 0 && (
                     <div>
@@ -180,11 +197,11 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
                   )}
 
                   {advance.nextSteps.length > 0 && (
-                    <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6">
-                      <h4 className="flex items-center text-blue-700 font-black mb-4 uppercase text-sm tracking-widest"><ArrowRight className="w-5 h-5 mr-2" /> Próximos Pasos</h4>
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
+                      <h4 className="flex items-center text-slate-700 font-black mb-4 text-lg"><ArrowRight className="w-5 h-5 mr-2 text-blue-600" /> Próximos Pasos</h4>
                       <ul className="grid md:grid-cols-2 gap-3">
                         {advance.nextSteps.map((step, i) => (
-                          <li key={i} className="flex text-blue-800 bg-white p-3 rounded-xl border border-blue-100 shadow-sm text-sm font-medium"><ArrowRight className="w-4 h-4 text-blue-400 mr-2 shrink-0" /> {step}</li>
+                          <li key={i} className="flex text-slate-600 bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-sm font-medium"><ArrowRight className="w-4 h-4 text-blue-400 mr-2 shrink-0 mt-0.5" /> {step}</li>
                         ))}
                       </ul>
                     </div>
@@ -201,10 +218,10 @@ export default async function AdvancesPage({ params }: { params: Promise<{ slug:
         <div>
           <h4 className="text-xl font-bold text-secondary mb-4 flex items-center justify-center md:justify-start">
             <CalendarDays className="w-6 h-6 mr-3 text-primary" />
-            Planificación del Ciclo
+            Planificación Ágil
           </h4>
           <p className="text-gray-500 text-sm leading-relaxed">
-            Cada reporte corresponde a un Sprint de la metodología Scrum. Los estados se actualizan automáticamente cada domingo a las 23:59 tras la revisión del Product Owner.
+            Cada reporte corresponde a un Sprint. El porcentaje de avance general se calcula en base a los Sprints completados (incluyendo la fase de Setup).
           </p>
         </div>
         <div className="flex justify-center md:justify-end">

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default async function ManageAdvancesPage() {
-  // Consulta directa a la DB para alimentar el selector de proyectos
   const projects = await prisma.project.findMany({
     select: { id: true, name: true }
   });
@@ -16,13 +15,12 @@ export default async function ManageAdvancesPage() {
       </Link>
 
       <div>
-        <h2 className="text-3xl font-black text-slate-800">Publicar Reporte</h2>
+        <h2 className="text-3xl font-black text-slate-800">Publicar Reporte de Sprint</h2>
         <p className="text-slate-500 mt-2">
-          Ingresa el avance correspondiente al Sprint actual. Esta información será visible públicamente de inmediato.
+          Ingresa el avance correspondiente a la iteración. Esta información será visible en la bitácora pública de inmediato.
         </p>
       </div>
 
-      {/* Aquí inyectamos el componente de Cliente */}
       <AdvanceForm projects={projects} />
     </div>
   );

@@ -4,10 +4,9 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 
-// Actualizamos la interfaz para recibir todos los datos complejos
 export async function createAdvanceReport(data: {
   projectId: string;
-  weekNumber: string;
+  sprintNumber: string;
   title: string;
   description: string;
   status: string;
@@ -15,20 +14,15 @@ export async function createAdvanceReport(data: {
   progress: number;
   objectives: string[];
   achievements: string[];
+  blockers: string[]; // NUEVO
   nextSteps: string[];
-  areasProgress: Prisma.InputJsonValue; // Recibe el JSON de áreas sin usar 'any'
+  areasProgress: Prisma.InputJsonValue;
 }) {
   try {
-    const weekNum = parseInt(data.weekNumber);
+    const sprintNum = parseInt(data.sprintNumber);
 
-    // Utilizamos UPSERT: Actualiza si ya existe la semana, Crea si es nueva
     await prisma.advanceReport.upsert({
-      where: {
-        projectId_weekNumber: {
-          projectId: data.projectId,
-          weekNumber: weekNum,
-        },
-      },
+      where: { projectId_sprintNumber: { projectId: data.projectId, sprintNumber: sprintNum } },
       update: {
         title: data.title,
         description: data.description,
@@ -37,12 +31,13 @@ export async function createAdvanceReport(data: {
         progress: data.progress,
         objectives: data.objectives,
         achievements: data.achievements,
+        blockers: data.blockers, // NUEVO
         nextSteps: data.nextSteps,
         areasProgress: data.areasProgress,
       },
       create: {
         projectId: data.projectId,
-        weekNumber: weekNum,
+        sprintNumber: sprintNum,
         title: data.title,
         description: data.description,
         status: data.status,
@@ -50,14 +45,13 @@ export async function createAdvanceReport(data: {
         progress: data.progress,
         objectives: data.objectives,
         achievements: data.achievements,
+        blockers: data.blockers, // NUEVO
         nextSteps: data.nextSteps,
         areasProgress: data.areasProgress,
       }
     });
 
-    // MAGIA NEXT.JS: Invalida la caché para que el frontend público se actualice al instante
     revalidatePath('/', 'layout');
-
     return { success: true };
   } catch (error) {
     console.error("Error guardando el reporte:", error);
