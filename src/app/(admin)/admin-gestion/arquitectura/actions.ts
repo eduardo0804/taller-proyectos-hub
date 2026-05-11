@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 
 export async function saveDiagramState(data: {
   projectId: string;
-  viewName: string; // 'frontend', 'backend', 'infra', 'as-is', o 'to-be'
+  viewName: string;
   nodes: unknown[]; 
   edges: unknown[]; 
 }) {
@@ -37,7 +37,11 @@ export async function saveDiagramState(data: {
       });
     }
 
+    // Refrescamos la página de proyecto y la nueva página global
     revalidatePath(`/proyecto/[slug]/arquitectura`, 'page');
+    if (data.viewName === 'proceso-scrum') {
+      revalidatePath(`/proceso-scrum`, 'page');
+    }
     
     return { success: true };
   } catch (error) {

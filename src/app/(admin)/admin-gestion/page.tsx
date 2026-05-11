@@ -16,7 +16,7 @@ export default function AdminDashboard() {
             <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <PlusCircle className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Reportes Semanales</h3>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">Reportes de Sprints</h3>
             <p className="text-slate-500 text-sm">Añade o actualiza el progreso de Legado Fia y NANUTECH.</p>
           </div>
         </Link>

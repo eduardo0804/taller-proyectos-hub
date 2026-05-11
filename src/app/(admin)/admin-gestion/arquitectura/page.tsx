@@ -13,12 +13,10 @@ export default async function ArchitectureEditorPage({
   const projectId = resolvedParams.projectId;
   const viewName = resolvedParams.viewName || "frontend";
 
-  // 1. Obtener todos los proyectos para llenar el selector
   const projects = await prisma.project.findMany({
     select: { id: true, name: true, cloudProvider: true }
   });
 
-  // 2. Si el usuario ya seleccionó un proyecto, buscar su diagrama existente
   let activeProject = null;
   let existingDiagram = null;
 
@@ -43,25 +41,24 @@ export default async function ArchitectureEditorPage({
       <div>
         <h2 className="text-3xl font-black text-slate-800 flex items-center gap-3">
           <Settings2 className="w-8 h-8 text-purple-600" />
-          Gestor de Arquitectura
+          Gestor de Arquitectura y Procesos
         </h2>
         <p className="text-slate-500 mt-2">
-          Diseña los diagramas de nube o procesos arrastrando componentes. Los cambios se reflejarán en vivo en la plataforma pública.
+          Diseña los diagramas de nube o el flujo Scrum arrastrando componentes. Los cambios se reflejarán en vivo en la plataforma pública.
         </p>
       </div>
 
-      {/* Barra de Controles */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <form method="GET" className="flex flex-col md:flex-row gap-4 items-end">
           <div className="w-full space-y-2">
-            <label className="text-sm font-bold text-slate-700">Proyecto</label>
+            <label className="text-sm font-bold text-slate-700">Proyecto Base</label>
             <select 
               name="projectId" 
               defaultValue={projectId || ""} 
               className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-purple-500 focus:outline-none"
               required
             >
-              <option value="" disabled>Selecciona el proyecto...</option>
+              <option value="" disabled>Selecciona un proyecto...</option>
               {projects.map(p => (
                 <option key={p.id} value={p.id}>{p.name} ({p.cloudProvider})</option>
               ))}
@@ -77,9 +74,11 @@ export default async function ArchitectureEditorPage({
             >
               <option value="frontend">Frontend</option>
               <option value="backend">Backend</option>
-              <option value="infra">DevSecOps / Infraestructura</option>
+              <option value="infra">Infraestructura</option>
               <option value="as-is">Modelo AS-IS</option>
               <option value="to-be">Modelo TO-BE</option>
+              {/* NUEVA OPCIÓN GLOBAL */}
+              <option value="proceso-scrum">🔄 Proceso Scrum (Global)</option>
             </select>
           </div>
 
@@ -92,12 +91,11 @@ export default async function ArchitectureEditorPage({
         </form>
       </div>
 
-      {/* Área del Editor de React Flow */}
       {activeProject ? (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <FlowEditor 
             projectId={activeProject.id}
-            projectName={activeProject.name}
+            projectName={viewName === 'proceso-scrum' ? 'Global HUB' : activeProject.name}
             cloudProvider={activeProject.cloudProvider}
             viewName={viewName}
             initialNodes={existingDiagram ? (existingDiagram.nodes as unknown as Node[]) : []}
