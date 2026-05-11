@@ -2,12 +2,13 @@
 
 import React, { useMemo } from 'react';
 import { ReactFlow, Background, Controls, MiniMap, Panel, type Node, type Edge } from '@xyflow/react';
-import { CloudNode, TechNode } from './CustomNodes'; 
+import { CloudNode, TechNode, GroupNode } from './CustomNodes'; 
 import '@xyflow/react/dist/style.css';
 
 const nodeTypes = {
   cloudNode: CloudNode,
   techNode: TechNode,
+  groupNode: GroupNode // Registramos el nuevo nodo para la vista pública
 };
 
 interface FlowViewerProps {
