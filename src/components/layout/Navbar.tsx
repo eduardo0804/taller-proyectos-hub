@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { Menu, X, Home, Users, TrendingUp, Layers, FolderOpen } from 'lucide-react';
+import { Menu, X, Home, Users, TrendingUp, Layers, FolderOpen, Workflow } from 'lucide-react'; // <-- Añadido Workflow
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,12 +11,9 @@ const Navbar = () => {
   const pathname = usePathname();
   const params = useParams();
   
-  // Obtenemos el slug actual de la URL (si existe)
   const slug = params?.slug as string;
 
-  // Lógica de "Scroll Spy" para detectar dónde está leyendo el usuario
   useEffect(() => {
-    // Si no estamos en el Home, no necesitamos espiar el scroll del hero/proyectos
     if (pathname !== '/') {
       setActiveSection("");
       return;
@@ -26,7 +23,6 @@ const Navbar = () => {
       const proyectosSection = document.getElementById('proyectos');
       if (proyectosSection) {
         const rect = proyectosSection.getBoundingClientRect();
-        // Si el tope de la sección 'proyectos' llega a la mitad superior de la pantalla
         if (rect.top <= window.innerHeight / 2) {
           setActiveSection('proyectos');
         } else {
@@ -36,36 +32,27 @@ const Navbar = () => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Revisar posición inicial al cargar
+    handleScroll(); 
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pathname]);
 
-  // Construimos los items dinámicamente basados en el proyecto actual
+  // Construimos los items dinámicamente
   const navItems = [
     { name: 'Inicio', path: '/' },
     { name: 'Proyectos', path: '/#proyectos' },
-    { 
-      name: 'Equipo', 
-      path: slug ? `/proyecto/${slug}/equipo` : '#', 
-      disabled: !slug 
-    },
-    { 
-      name: 'Avances', 
-      path: slug ? `/proyecto/${slug}/avances` : '#', 
-      disabled: !slug 
-    },
-    { 
-      name: 'Arquitectura', 
-      path: slug ? `/proyecto/${slug}/arquitectura` : '#', 
-      disabled: !slug 
-    },
+    // NUEVO ENLACE GLOBAL
+    { name: 'Proceso Scrum', path: '/proceso-scrum', disabled: false }, 
+    { name: 'Equipo', path: slug ? `/proyecto/${slug}/equipo` : '#', disabled: !slug },
+    { name: 'Avances', path: slug ? `/proyecto/${slug}/avances` : '#', disabled: !slug },
+    { name: 'Arquitectura', path: slug ? `/proyecto/${slug}/arquitectura` : '#', disabled: !slug },
   ];
 
   const getIcon = (name: string) => {
     switch (name) {
       case 'Inicio': return <Home className="w-4 h-4" />;
       case 'Proyectos': return <FolderOpen className="w-4 h-4" />;
+      case 'Proceso Scrum': return <Workflow className="w-4 h-4" />; // NUEVO ÍCONO
       case 'Equipo': return <Users className="w-4 h-4" />;
       case 'Avances': return <TrendingUp className="w-4 h-4" />;
       case 'Arquitectura': return <Layers className="w-4 h-4" />;
@@ -73,7 +60,6 @@ const Navbar = () => {
     }
   };
 
-  // Evaluador inteligente de estado activo
   const checkIsActive = (itemName: string, itemPath: string) => {
     if (itemName === 'Inicio') return pathname === '/' && activeSection === 'inicio';
     if (itemName === 'Proyectos') return pathname === '/' && activeSection === 'proyectos';
@@ -86,7 +72,6 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group shrink-0">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg group-hover:rotate-3 transition-transform">
               <span className="text-white font-bold text-lg">HUB</span>
@@ -97,11 +82,9 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navItems.map((item) => {
               if (item.disabled) return null;
-
               const isActive = checkIsActive(item.name, item.path);
 
               return (
@@ -121,7 +104,6 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Mobile Toggle */}
           <button 
             onClick={() => setIsOpen(!isOpen)} 
             className="md:hidden p-2 rounded-md text-secondary hover:bg-gray-100 transition-colors focus:outline-none"
@@ -132,13 +114,11 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-2xl border-t border-gray-100 animate-in slide-in-from-top duration-300 z-50">
           <div className="px-4 pt-2 pb-6 space-y-2">
             {navItems.map((item) => {
                if (item.disabled) return null;
-               
                const isActive = checkIsActive(item.name, item.path);
                
                return (
