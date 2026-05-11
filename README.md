@@ -20,7 +20,6 @@ Esta plataforma está dividida en dos grandes módulos, aplicando el patrón de 
 * **Lenguaje:** TypeScript (Strict Mode)
 * **Estilos y UI:** Tailwind CSS + Lucide React
 * **Diagramas:** @xyflow/react (React Flow)
-* **Formularios y Validación:** React Hook Form + Zod
 
 ---
 
